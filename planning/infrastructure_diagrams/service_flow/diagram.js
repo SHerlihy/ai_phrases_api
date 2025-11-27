@@ -8,11 +8,21 @@ const serviceFlow = `
             GetIds[lambda > s3:GetObject]
         end
     end
-    
-    
-    subgraph AWS
-    subgraph global
+
+    subgraph AWSIAM[IAM Policies]
         subgraph LAIM[Lambda IAM]
+            subgraph DRP[Delete Role Policy]
+                subgraph DRPAllow[Allow]
+                    DeleteDoc[lambda > s3:DeleteObject]
+                end
+            end
+
+            subgraph URP[Upload Role Policy]
+                subgraph URPAllow[Allow]
+                    UploadDoc[lambda > s3:PutObject]
+                end
+            end
+
             subgraph GRP[Get Role Policy]
                 subgraph GRPAllow[Allow]
                     GetIds[lambda > s3:GetObject]
@@ -24,15 +34,22 @@ const serviceFlow = `
                     APILambda["API > lambda:InvokeFunction"]
                 end
             end
-
         end
+    end
     
+    subgraph AWS
+    subgraph global
+
         GRP -.- List
         GRP -.- Get
+        URP -.- Upload
+        DRP -.- Delete
         
         Bucket -.-> GetIds
+        Bucket -.-> UploadDoc
+        Bucket -.-> DeleteDoc
         
-        
+        LRP -.- Auth
         LRP -.- List
         LRP -.- Get
         LRP -.- Upload
