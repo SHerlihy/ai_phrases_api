@@ -1,39 +1,36 @@
 const serviceFlow = `
     flowchart LR
 
-    Client <--> Site
+    Client <--> API
     
-    subgraph namecheap
-        Site[SHerlihy.com]
-    end
-    
-    Site --> R53
-    R53 --> Site
-
     subgraph AWS
     subgraph global
-        DNS{Cloudfront}
-        R53[Route 53]
-        Cert[HTTPS Cert]
+        API{API Gateway}
+        Auth[authoriser lambda]
         
-        Cert --> R53
-        R53 <--> DNS
-        DNS <--> Cache
-        DNS <--> S3
-        
-        subgraph eu-west-2
-            subgraph acl-public-read
-                S3[S3 sherlihy.com]
-            end
-        end
-    end
-    end
-    
-    subgraph upload
-    Actions[CI/CD Pipeline]
-    Actions --> S3
-    end
+        API <--> Auth
 
+        subgraph authorised
+            List[Get all IDs]
+            Get[Get by IDs]
+            Upload[Upload single]
+            Delete[Delete by IDs]
+        end
+
+        API <-- GET: / --> List
+        API <-- GET: /?ids=[ids] --> Get
+        API <-- POST: / --> Upload
+        API <-- DELETE: /?ids=[ids] --> Delete
+
+        Bucket[S3 Bucket]
+
+        List <--> Bucket
+        Get <--> Bucket
+        Upload <--> Bucket
+        Delete <--> Bucket
+        
+    end
+    end
 `
 
 export default serviceFlow
