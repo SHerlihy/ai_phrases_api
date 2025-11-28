@@ -11,6 +11,24 @@ provider "aws" {
   profile = "kbaas"
 }
 
+resource "aws_api_gateway_authorizer" "storage" {
+  name                   = "storage"
+  rest_api_id            = aws_api_gateway_rest_api.storage.id
+  type = "REQUEST"
+
+  authorizer_uri         = aws_lambda_function.authorizer.invoke_arn
+  authorizer_credentials = aws_iam_role.invocation_role.arn
+}
+
+#make lambda
+#https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html
+#returns iam polcy and principal id
+#emaples in dir
+#principal stuff - https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-lambda-authorizer-output.html
+#make iam
+
+resource 
+
 resource "aws_api_gateway_rest_api" "storage" {
   name        = "storage"
 }
