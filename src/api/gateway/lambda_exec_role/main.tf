@@ -19,7 +19,6 @@ resource "aws_iam_role" "lambda_exec" {
     Statement = [{
       Action = "sts:AssumeRole"
       Effect = "Allow"
-      Sid    = ""
       Principal = {
         Service = "lambda.amazonaws.com"
       }
@@ -28,29 +27,29 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_exec" {
+resource "aws_iam_role_policy_attachment" "lambda_log" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_policy_document" "api_gateway_exec" {
+data "aws_iam_policy_document" "lambda_exec" {
     statement {
         effect = "Allow"
-
         actions = [
             "lambda: InvokeFunction"
         ]
-
-        principals {
-            type = "AWS"
-            identifiers = [var.api_arn]
-        }
-        
-        resources = var.lambda_arns
+        resources = [
+          "arn:aws:lambda:::*"
+        ]
     }
 }
 
-resource "aws_iam_role_policy_attachment" "api_gateway_exec" {
+resource "aws_iam_policy" "lambda_exec" {
+  name = "lambda_exec"
+  policy = data.aws_iam_policy_document.lambda_exec.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_exec" {
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = aws_iam_policy_document.api_gateway_exec.arn
+  policy_arn = aws_iam_policy.lambda_exec.arn
 }

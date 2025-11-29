@@ -1,4 +1,4 @@
 output "role_arn" {
     description = "lambda execution from api role arn"
-    value = string
+    value = aws_iam_role.lambda_exec.arn
 }

@@ -1,9 +1,7 @@
-# A simple request-based authorizer example to demonstrate how to use request
-# parameters to allow or deny a request. In this example, a request is
-# authorized if the client-supplied headerauth1 header, QueryString1
-# query parameter, and stage variable of StageVar1 all match
-# specified values of 'headerValue1', 'queryValue1', and 'stageValue1',
-# respectively.
+import os
+
+AUTH_KEY = os.environ.get('AUTH_KEY')
+USER_ID = "testUser"
 
 def lambda_handler(event, context):
     print(event)
@@ -11,32 +9,16 @@ def lambda_handler(event, context):
     # Retrieve request parameters from the Lambda function input:
     headers = event['headers']
     queryStringParameters = event['queryStringParameters']
-    pathParameters = event['pathParameters']
-    stageVariables = event['stageVariables']
-
-    # Parse the input for the parameter values
-    tmp = event['methodArn'].split(':')
-    apiGatewayArnTmp = tmp[5].split('/')
-    awsAccountId = tmp[4]
-    region = tmp[3]
-    restApiId = apiGatewayArnTmp[0]
-    stage = apiGatewayArnTmp[1]
-    method = apiGatewayArnTmp[2]
-    resource = '/'
-
-    if (apiGatewayArnTmp[3]):
-        resource += apiGatewayArnTmp[3]
 
     # Perform authorization to return the Allow policy for correct parameters
     # and the 'Unauthorized' error, otherwise.
-
-    if (headers['HeaderAuth1'] == "headerValue1" and queryStringParameters['QueryString1'] == "queryValue1" and stageVariables['StageVar1'] == "stageValue1"):
-        response = generateAllow('me', event['methodArn'])
+    if (queryStringParameters['authKey'] == AUTH_KEY):
+        response = generateAllow(USER_ID, event['methodArn'])
         print('authorized')
         return response
     else:
         print('unauthorized')
-        response = generateDeny('me', event['methodArn'])
+        response = generateDeny(USER_ID, event['methodArn'])
         return response
     # Help function to generate IAM policy
 
