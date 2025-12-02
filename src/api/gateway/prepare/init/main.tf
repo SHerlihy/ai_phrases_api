@@ -52,5 +52,17 @@ resource "aws_api_gateway_resource" "mock" {
 resource "aws_api_gateway_resource" "bucket" {
   rest_api_id = aws_api_gateway_rest_api.storage.id
   parent_id   = aws_api_gateway_rest_api.storage.root_resource_id
-  path_part   = "bucket/list"
+  path_part   = "bucket"
+}
+
+resource "aws_api_gateway_resource" "bucket_list" {
+  rest_api_id = aws_api_gateway_rest_api.storage.id
+  parent_id   = aws_api_gateway_resource.bucket.id
+  path_part   = "list"
+}
+
+resource "aws_api_gateway_resource" "bucket_list_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.storage.id
+  parent_id   = aws_api_gateway_resource.bucket_list.id
+  path_part   = "{proxy+}"
 }

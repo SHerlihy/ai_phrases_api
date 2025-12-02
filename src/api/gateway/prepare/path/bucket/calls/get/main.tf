@@ -54,7 +54,7 @@ resource "aws_lambda_permission" "allow_api" {
   function_name = aws_lambda_function.bucket_get.function_name
   principal     = "apigateway.amazonaws.com"
   
-  source_arn = "${var.execution_arn}/*/*"
+  source_arn = "${var.execution_arn}/*"
 }
 
 resource "aws_api_gateway_method" "proxy_root" {
