@@ -1,4 +1,5 @@
 import os
+#???import asyncio
 
 def lambda_handler(event, context):
     AUTH_KEY = os.environ.get('AUTH_KEY')
@@ -29,15 +30,19 @@ def generatePolicy(principalId, effect, resource):
         'principalId': principalId,
         'policyDocument': {
             'Version': '2012-10-17',
-            'Statement': [{
-                'Action': 'execute-api:Invoke',
-                'Effect': effect,
-                'Resource': resource
-            }]
+            'Statement': [
+                {
+                    'Action': 'execute-api:Invoke',
+                    'Effect': effect,
+                    'Resource': resource
+                }
+            ]
+        },
+        'context': {
+            'message': effect
         }
     }
     return authResponse
-
 
 def generateAllow(principalId, resource):
     return generatePolicy(principalId, 'Allow', resource)
