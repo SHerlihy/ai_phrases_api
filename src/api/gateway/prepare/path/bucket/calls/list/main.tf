@@ -76,9 +76,19 @@ resource "aws_lambda_permission" "allow_api" {
  #   "method.request.querystring.authKey" = true
  # }
 
+resource "aws_api_gateway_resource" "bucket_list" {
+  rest_api_id   = var.rest_api_id
+  parent_id   = var.resource_id
+  path_part   = "list"
+}
+
+locals {
+  resource_id = aws_api_gateway_resource.bucket_list.id
+}
+
 resource "aws_api_gateway_method" "bucket_get" {
   rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = local.resource_id
   http_method   = "ANY"
 
   authorization = "NONE"
@@ -86,7 +96,7 @@ resource "aws_api_gateway_method" "bucket_get" {
 
 resource "aws_api_gateway_integration" "bucket_get" {
   rest_api_id = var.rest_api_id
-  resource_id = var.resource_id
+  resource_id   = local.resource_id
   http_method = aws_api_gateway_method.bucket_get.http_method
 
   passthrough_behavior = "WHEN_NO_TEMPLATES"
@@ -101,7 +111,7 @@ resource "aws_api_gateway_integration" "bucket_get" {
 ##https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
 resource "aws_api_gateway_method_response" "bucket_get" {
   rest_api_id = var.rest_api_id
-  resource_id = var.resource_id
+  resource_id   = local.resource_id
   http_method = aws_api_gateway_method.bucket_get.http_method
   status_code = "200"
 
@@ -119,7 +129,7 @@ resource "aws_api_gateway_integration_response" "bucket_get" {
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id = var.resource_id
+  resource_id   = local.resource_id
   http_method = aws_api_gateway_method.bucket_get.http_method
   status_code = aws_api_gateway_method_response.bucket_get.status_code
 

@@ -54,9 +54,3 @@ resource "aws_api_gateway_resource" "bucket" {
   parent_id   = aws_api_gateway_rest_api.storage.root_resource_id
   path_part   = "bucket"
 }
-
-resource "aws_api_gateway_resource" "bucket_list" {
-  rest_api_id = aws_api_gateway_rest_api.storage.id
-  parent_id   = aws_api_gateway_resource.bucket.id
-  path_part   = "list"
-}

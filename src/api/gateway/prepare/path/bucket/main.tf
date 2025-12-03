@@ -31,8 +31,8 @@ variable "execution_arn" {
   type = string
 }
 
-module "get" {
-    source = "./calls/get"
+module "list" {
+    source = "./calls/list"
 
     rest_api_id = var.rest_api_id
     resource_id = var.resource_id
@@ -42,5 +42,5 @@ module "get" {
 }
 
 output "get_lambda_arn" {
-  value = module.get.lambda_arn
+  value = module.list.lambda_arn
 }
