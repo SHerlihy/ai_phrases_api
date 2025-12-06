@@ -41,3 +41,9 @@ echo -e "\n"
 
 curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
 echo -e "\n"
+
+curl -X PUT --upload-file "./from_test.txt.gz" "${BUCKET_URL}/fromTest/?authKey=${TEST_KEY}"
+echo -e "\n"
+
+curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
+echo -e "\n"

@@ -41,10 +41,10 @@ locals {
   region = data.aws_region.current.region
 }
 
-resource "aws_api_gateway_method" "bucket_delete" {
+resource "aws_api_gateway_method" "bucket_put" {
   rest_api_id   = var.rest_api_id
   resource_id   = var.resource_id
-  http_method   = "DELETE"
+  http_method   = "PUT"
 
   authorization = "CUSTOM"
   authorizer_id = var.authorizer_id
@@ -56,13 +56,13 @@ resource "aws_api_gateway_method" "bucket_delete" {
   }
 }
 
-resource "aws_api_gateway_integration" "bucket_delete" {
+resource "aws_api_gateway_integration" "bucket_put" {
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.bucket_delete.http_method
+  http_method = aws_api_gateway_method.bucket_put.http_method
 
   type        = "AWS"
-  integration_http_method = "DELETE"
+  integration_http_method = "PUT"
   uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}/{object}"
   credentials = var.bucket_access_role
 
@@ -74,15 +74,15 @@ resource "aws_api_gateway_integration" "bucket_delete" {
   }
 }
 
-resource "aws_api_gateway_method_response" "bucket_delete" {
+resource "aws_api_gateway_method_response" "bucket_put" {
   depends_on = [
-    aws_api_gateway_method.bucket_delete,
-    aws_api_gateway_integration.bucket_delete
+    aws_api_gateway_method.bucket_put,
+    aws_api_gateway_integration.bucket_put
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.bucket_delete.http_method
+  http_method = aws_api_gateway_method.bucket_put.http_method
   status_code = "200"
 
   response_models = {
@@ -96,16 +96,16 @@ resource "aws_api_gateway_method_response" "bucket_delete" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "bucket_delete" {
+resource "aws_api_gateway_integration_response" "bucket_put" {
   depends_on = [
-    aws_api_gateway_method.bucket_delete,
-    aws_api_gateway_integration.bucket_delete
+    aws_api_gateway_method.bucket_put,
+    aws_api_gateway_integration.bucket_put
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.bucket_delete.http_method
-  status_code = aws_api_gateway_method_response.bucket_delete.status_code
+  http_method = aws_api_gateway_method.bucket_put.http_method
+  status_code = aws_api_gateway_method_response.bucket_put.status_code
 
   selection_pattern = ""
 

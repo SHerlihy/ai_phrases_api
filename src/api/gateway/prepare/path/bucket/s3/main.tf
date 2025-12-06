@@ -43,6 +43,7 @@ resource "aws_iam_policy" "api_gateway_s3_list_policy" {
           "s3:ListBucket",
           "s3:GetBucketLocation",
           "s3:GetObject",
+          "s3:PutObject",
           "s3:DeleteObject"
         ],
         Resource = [
