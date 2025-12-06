@@ -35,16 +35,20 @@ variable "authorizer_id" {
   type = string
 }
 
+variable "resource_id" {
+  type = string
+}
+
 data "aws_region" "current" {}
 
 locals {
   region = data.aws_region.current.region
 }
 
-resource "aws_api_gateway_method" "object_get" {
+resource "aws_api_gateway_method" "bucket_get" {
   rest_api_id   = var.rest_api_id
   resource_id   = var.resource_id
-  http_method   = "GET"
+  http_method   = "DELETE"
 
   authorization = "CUSTOM"
   authorizer_id = var.authorizer_id
@@ -52,17 +56,16 @@ resource "aws_api_gateway_method" "object_get" {
   request_parameters = {
     "method.request.path.bucket" = true
     "method.request.path.object" = true
-    "method.request.path.authKey" = true
   }
 }
 
-resource "aws_api_gateway_integration" "object_get" {
+resource "aws_api_gateway_integration" "bucket_get" {
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.object_get.http_method
+  http_method = aws_api_gateway_method.bucket_get.http_method
 
   type        = "AWS"
-  integration_http_method = "GET"
+  integration_http_method = "DELETE"
   uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}/{object}"
   credentials = var.bucket_access_role
 
@@ -74,15 +77,15 @@ resource "aws_api_gateway_integration" "object_get" {
   }
 }
 
-resource "aws_api_gateway_method_response" "object_get" {
+resource "aws_api_gateway_method_response" "bucket_get" {
   depends_on = [
-    aws_api_gateway_method.object_get,
-    aws_api_gateway_integration.object_get
+    aws_api_gateway_method.bucket_get,
+    aws_api_gateway_integration.bucket_get
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.object_get.http_method
+  http_method = aws_api_gateway_method.bucket_get.http_method
   status_code = "200"
 
   response_models = {
@@ -96,16 +99,16 @@ resource "aws_api_gateway_method_response" "object_get" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "object_get" {
+resource "aws_api_gateway_integration_response" "bucket_get" {
   depends_on = [
-    aws_api_gateway_method.object_get,
-    aws_api_gateway_integration.object_get
+    aws_api_gateway_method.bucket_get,
+    aws_api_gateway_integration.bucket_get
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.object_get.http_method
-  status_code = aws_api_gateway_method_response.object_get.status_code
+  http_method = aws_api_gateway_method.bucket_get.http_method
+  status_code = aws_api_gateway_method_response.bucket_get.status_code
 
   selection_pattern = ""
 
