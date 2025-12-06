@@ -23,3 +23,8 @@ echo -e "\n"
 
 curl -X GET "${LIST_URL}/?authKey=deny"
 echo -e "\n"
+
+OBJECT_URL="${ROOT_URL}/doc/test"
+echo -e ${OBJECT_URL}
+curl -X GET "${OBJECT_URL}/?authKey=${TEST_KEY}"
+echo -e "\n"
