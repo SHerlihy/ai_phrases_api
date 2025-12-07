@@ -32,3 +32,7 @@ module "bucket_calls" {
 output "rest_api_id" {
   value = module.init.rest_api_id
 }
+
+output "bucket_name" {
+  value = module.bucket_calls.bucket_name
+}

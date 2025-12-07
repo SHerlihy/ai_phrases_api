@@ -76,3 +76,19 @@ module "list" {
     root_resource_id = var.root_resource_id
     authorizer_id = module.authorizer.id
 }
+
+module "object" {
+    source = "./object"
+
+    bucket_name = module.s3.bucket_name
+    bucket_access_role = aws_iam_role.api_gateway_s3_role.arn
+    
+    rest_api_id = var.rest_api_id
+    resource_id = var.resource_id
+    root_resource_id = var.root_resource_id
+    authorizer_id = module.authorizer.id
+}
+
+output "bucket_name" {
+  value = module.s3.bucket_name
+}

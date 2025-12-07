@@ -41,54 +41,48 @@ locals {
   region = data.aws_region.current.region
 }
 
-resource "aws_api_gateway_resource" "bucket_list" {
+resource "aws_api_gateway_method" "object_get" {
   rest_api_id   = var.rest_api_id
-  parent_id   = var.resource_id
-  path_part   = "list"
-}
-
-locals {
-  resource_id = aws_api_gateway_resource.bucket_list.id
-}
-
-resource "aws_api_gateway_method" "bucket_list" {
-  rest_api_id   = var.rest_api_id
-  resource_id   = local.resource_id
+  resource_id   = var.resource_id
   http_method   = "GET"
 
   authorization = "CUSTOM"
   authorizer_id = var.authorizer_id
-}
-
-resource "aws_api_gateway_integration" "bucket_list" {
-  rest_api_id = var.rest_api_id
-  resource_id   = local.resource_id
-  http_method = aws_api_gateway_method.bucket_list.http_method
-
-  type        = "AWS"
-  integration_http_method = "GET"
-  #uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}"
-  credentials = var.bucket_access_role
 
   request_parameters = {
-    "integration.request.path.bucket" = "'${var.bucket_name}'"
+    "method.request.path.bucket" = true
+    "method.request.path.object" = true
+    "method.request.path.authKey" = true
   }
 }
 
-#response not in guide
-#https://registry.terraform.io/providers/hashicorp/aws/2.33.0/docs/guides/serverless-with-aws-lambda-and-api-gateway
-##cors stuff is v2
-##https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
-resource "aws_api_gateway_method_response" "bucket_list" {
+resource "aws_api_gateway_integration" "object_get" {
+  rest_api_id = var.rest_api_id
+  resource_id   = var.resource_id
+  http_method = aws_api_gateway_method.object_get.http_method
+
+  type        = "AWS"
+  integration_http_method = "GET"
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}/{object}"
+  credentials = var.bucket_access_role
+
+  passthrough_behavior    = "WHEN_NO_MATCH"
+
+  request_parameters = {
+    "integration.request.path.bucket" = "method.request.path.bucket"
+    "integration.request.path.object" = "method.request.path.object"
+  }
+}
+
+resource "aws_api_gateway_method_response" "object_get" {
   depends_on = [
-    aws_api_gateway_method.bucket_list,
-    aws_api_gateway_integration.bucket_list
+    aws_api_gateway_method.object_get,
+    aws_api_gateway_integration.object_get
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id   = local.resource_id
-  http_method = aws_api_gateway_method.bucket_list.http_method
+  resource_id   = var.resource_id
+  http_method = aws_api_gateway_method.object_get.http_method
   status_code = "200"
 
   response_models = {
@@ -102,16 +96,16 @@ resource "aws_api_gateway_method_response" "bucket_list" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "bucket_list" {
+resource "aws_api_gateway_integration_response" "object_get" {
   depends_on = [
-    aws_api_gateway_method.bucket_list,
-    aws_api_gateway_integration.bucket_list
+    aws_api_gateway_method.object_get,
+    aws_api_gateway_integration.object_get
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id   = local.resource_id
-  http_method = aws_api_gateway_method.bucket_list.http_method
-  status_code = aws_api_gateway_method_response.bucket_list.status_code
+  resource_id   = var.resource_id
+  http_method = aws_api_gateway_method.object_get.http_method
+  status_code = aws_api_gateway_method_response.object_get.status_code
 
   selection_pattern = ""
 
