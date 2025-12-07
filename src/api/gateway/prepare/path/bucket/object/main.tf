@@ -74,7 +74,7 @@ module "upload" {
 
   bucket_name = var.bucket_name
   bucket_access_role = var.bucket_access_role
-  
+
   rest_api_id = var.rest_api_id
   resource_id = local.resource_id
   root_resource_id = var.root_resource_id

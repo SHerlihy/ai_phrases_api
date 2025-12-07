@@ -13,6 +13,7 @@ provider "aws" {
 
 resource "aws_s3_bucket" "docs" {
   bucket_prefix = "docs"
+  force_destroy = true
 }
 
 resource "aws_s3_object" "object" {
