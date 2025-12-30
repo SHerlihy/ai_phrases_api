@@ -72,6 +72,7 @@ resource "aws_api_gateway_integration" "bucket_put" {
     "integration.request.path.bucket" = "method.request.path.bucket"
     "integration.request.path.object" = "method.request.path.object"
   }
+
 }
 
 resource "aws_api_gateway_method_response" "bucket_put" {

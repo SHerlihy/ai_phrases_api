@@ -42,3 +42,10 @@ echo -e "\n"
 curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
 echo -e "\n"
 
+echo -e "OPTIONS"
+echo -e "obj path"
+curl \
+-H "Access-Control-Request-Method: PUT" \
+-H "Access-Control-Request-Headers: X-Requested-With" \
+-X OPTIONS --verbose "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
+echo -e "\n"
