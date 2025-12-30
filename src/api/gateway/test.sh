@@ -47,5 +47,12 @@ echo -e "obj path"
 curl \
 -H "Access-Control-Request-Method: PUT" \
 -H "Access-Control-Request-Headers: X-Requested-With" \
--X OPTIONS --verbose "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
+-X OPTIONS "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
+echo -e "\n"
+
+echo -e "List preflight"
+curl \
+-H "Access-Control-Request-Method: GET" \
+-H "Access-Control-Request-Headers: X-Requested-With" \
+-X OPTIONS "${LIST_URL}/?authKey=${TEST_KEY}"
 echo -e "\n"
