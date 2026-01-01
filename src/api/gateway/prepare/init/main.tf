@@ -11,6 +11,10 @@ provider "aws" {
   profile = "kbaas"
 }
 
+variable "query_lambda_name" {
+  type = string
+}
+
 data "aws_region" "current" {}
 
 resource "aws_api_gateway_rest_api" "kbaas" {
@@ -41,6 +45,15 @@ resource "aws_iam_role_policy_attachment" "gateway_log" {
 
 resource "aws_api_gateway_account" "kbaas" {
   cloudwatch_role_arn = aws_iam_role.gateway.arn
+}
+
+resource "aws_lambda_permission" "gateway_query" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${var.query_lambda_name}"
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.kbaas.execution_arn}/*/*"
 }
 
 resource "aws_api_gateway_resource" "kbaas" {
