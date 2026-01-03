@@ -27,10 +27,6 @@ variable "resource_id" {
   type = string
 }
 
-variable "root_resource_id" {
-  type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
@@ -67,13 +63,8 @@ resource "aws_api_gateway_integration" "source_list" {
 
   type        = "AWS"
   integration_http_method = "GET"
-  #uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}"
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}"
   credentials = var.bucket_access_role
-
-  request_parameters = {
-    "integration.request.path.bucket" = "'${var.bucket_name}'"
-  }
 }
 
 #response not in guide

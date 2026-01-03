@@ -11,15 +11,15 @@ provider "aws" {
   profile = "kbaas"
 }
 
+variable "bucket_access_policy" {
+    type = string
+}
+
 variable "query_lambda_name" {
   type = string
 }
 
 data "aws_region" "current" {}
-
-resource "aws_api_gateway_rest_api" "kbaas" {
-  name        = "kbaas"
-}
 
 data "aws_iam_policy_document" "gateway_assume" {
   statement {
@@ -35,6 +35,7 @@ data "aws_iam_policy_document" "gateway_assume" {
 }
 
 resource "aws_iam_role" "gateway" {
+  name = "gateway_api"
   assume_role_policy = data.aws_iam_policy_document.gateway_assume.json
 }
 
@@ -47,6 +48,11 @@ resource "aws_api_gateway_account" "kbaas" {
   cloudwatch_role_arn = aws_iam_role.gateway.arn
 }
 
+resource "aws_iam_role_policy_attachment" "bucket_access" {
+  role       = aws_iam_role.gateway.name
+  policy_arn = var.bucket_access_policy
+}
+
 resource "aws_lambda_permission" "gateway_query" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
@@ -54,6 +60,10 @@ resource "aws_lambda_permission" "gateway_query" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.kbaas.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_rest_api" "kbaas" {
+  name        = "kbaas"
 }
 
 resource "aws_api_gateway_resource" "kbaas" {

@@ -27,10 +27,6 @@ variable "resource_id" {
   type = string
 }
 
-variable "root_resource_id" {
-  type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
@@ -48,12 +44,6 @@ resource "aws_api_gateway_method" "bucket_put" {
 
   authorization = "CUSTOM"
   authorizer_id = var.authorizer_id
-
-  request_parameters = {
-    "method.request.path.bucket" = true
-    "method.request.path.object" = true
-    "method.request.path.authKey" = true
-  }
 }
 
 resource "aws_api_gateway_integration" "bucket_put" {
@@ -63,15 +53,10 @@ resource "aws_api_gateway_integration" "bucket_put" {
 
   type        = "AWS"
   integration_http_method = "PUT"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}/{object}"
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}/phrases"
   credentials = var.bucket_access_role
 
   passthrough_behavior    = "WHEN_NO_MATCH"
-
-  request_parameters = {
-    "integration.request.path.bucket" = "method.request.path.bucket"
-    "integration.request.path.object" = "method.request.path.object"
-  }
 }
 
 resource "aws_api_gateway_method_response" "bucket_put" {

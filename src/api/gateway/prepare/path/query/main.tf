@@ -27,9 +27,15 @@ variable "invoke_arn" {
     type = string
 }
 
+resource "aws_api_gateway_resource" "query" {
+  rest_api_id = var.rest_api_id
+  parent_id   = var.resource_id
+  path_part   = "query"
+}
+
 resource "aws_api_gateway_method" "query" {
   rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.query.id
   http_method   = "POST"
 
   authorization = "CUSTOM"
@@ -38,7 +44,7 @@ resource "aws_api_gateway_method" "query" {
 
 resource "aws_api_gateway_integration" "query" {
   rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.query.id
 
   http_method          = aws_api_gateway_method.query.http_method
   integration_http_method = "POST"
@@ -48,8 +54,14 @@ resource "aws_api_gateway_integration" "query" {
 }
 
 resource "aws_api_gateway_method_response" "query" {
+  depends_on = [
+aws_api_gateway_resource.query,
+aws_api_gateway_method.query
+  ]
+
   rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.query.id
 
   http_method = aws_api_gateway_method.query.http_method
+  status_code = 200
 }
