@@ -25,9 +25,15 @@ locals {
   region = data.aws_region.current.region
 }
 
+resource "aws_api_gateway_resource" "any" {
+  rest_api_id = var.rest_api_id
+  parent_id   = var.resource_id
+  path_part   = "{proxy+}"
+}
+
 resource "aws_api_gateway_method" "preflight" {
   rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.any.id
   http_method   = "OPTIONS"
 
   authorization = "NONE"
@@ -35,7 +41,7 @@ resource "aws_api_gateway_method" "preflight" {
 
 resource "aws_api_gateway_integration" "preflight" {
   rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.preflight.http_method
 
   type        = "MOCK"
@@ -54,7 +60,7 @@ resource "aws_api_gateway_method_response" "preflight" {
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.preflight.http_method
   status_code = "200"
 
@@ -72,7 +78,7 @@ resource "aws_api_gateway_integration_response" "preflight" {
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
+  resource_id   = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.preflight.http_method
   status_code = aws_api_gateway_method_response.preflight.status_code
 
