@@ -47,6 +47,13 @@ module "authorizer" {
     auth_key = var.auth_key
 }
 
+module "preflight" {
+    source = "./preflight"
+
+    rest_api_id = var.rest_api_id
+    resource_id = var.resource_id
+}
+
 module "source" {
     source = "./source"
 
