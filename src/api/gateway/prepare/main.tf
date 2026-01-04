@@ -11,22 +11,49 @@ provider "aws" {
   profile = "kbaas"
 }
 
+# not safe
+variable "auth_key" {
+    type = string
+    sensitive = true
+    default = "allow"
+}
+
+variable "bucket_name" {
+    type = string
+}
+
+variable "bucket_access_policy" {
+    type = string
+}
+
+variable "query_lambda_name" {
+    type = string
+}
+
+variable "query_invoke_arn" {
+    type = string
+}
+
 module "init" {
   source = "./init"
+
+  query_lambda_name = var.query_lambda_name
+  bucket_access_policy = var.bucket_access_policy
 }
 
-module "exec_role" {
-    source = "./lambda_exec_role"
-}
-
-module "bucket_calls" {
-  source = "./path/bucket"
+module "paths" {
+  source = "./path"
 
   rest_api_id = module.init.rest_api_id
   resource_id = module.init.resource_id
-  root_resource_id = module.init.root_resource_id
-  lambda_role_arn = module.exec_role.lambda_role_arn
+
   execution_arn = module.init.execution_arn
+  auth_key = var.auth_key
+
+  bucket_name = var.bucket_name
+  bucket_access_role = module.init.gateway_role_arn
+
+  query_invoke_arn = var.query_invoke_arn
 }
 
 output "rest_api_id" {
@@ -34,5 +61,5 @@ output "rest_api_id" {
 }
 
 output "bucket_name" {
-  value = module.bucket_calls.bucket_name
+  value = var.bucket_name
 }

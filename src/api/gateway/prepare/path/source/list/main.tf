@@ -27,10 +27,6 @@ variable "resource_id" {
   type = string
 }
 
-variable "root_resource_id" {
-  type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
@@ -41,48 +37,49 @@ locals {
   region = data.aws_region.current.region
 }
 
-resource "aws_api_gateway_method" "bucket_delete" {
+resource "aws_api_gateway_resource" "source_list" {
   rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
-  http_method   = "DELETE"
+  parent_id   = var.resource_id
+  path_part   = "list"
+}
+
+locals {
+  resource_id = aws_api_gateway_resource.source_list.id
+}
+
+resource "aws_api_gateway_method" "source_list" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = local.resource_id
+  http_method   = "GET"
 
   authorization = "CUSTOM"
   authorizer_id = var.authorizer_id
-
-  request_parameters = {
-    "method.request.path.bucket" = true
-    "method.request.path.object" = true
-    "method.request.path.authKey" = true
-  }
 }
 
-resource "aws_api_gateway_integration" "bucket_delete" {
+resource "aws_api_gateway_integration" "source_list" {
   rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.bucket_delete.http_method
+  resource_id   = local.resource_id
+  http_method = aws_api_gateway_method.source_list.http_method
 
   type        = "AWS"
-  integration_http_method = "DELETE"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}/{object}"
+  integration_http_method = "GET"
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}"
   credentials = var.bucket_access_role
-
-  passthrough_behavior    = "WHEN_NO_MATCH"
-
-  request_parameters = {
-    "integration.request.path.bucket" = "method.request.path.bucket"
-    "integration.request.path.object" = "method.request.path.object"
-  }
 }
 
-resource "aws_api_gateway_method_response" "bucket_delete" {
+#response not in guide
+#https://registry.terraform.io/providers/hashicorp/aws/2.33.0/docs/guides/serverless-with-aws-lambda-and-api-gateway
+##cors stuff is v2
+##https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
+resource "aws_api_gateway_method_response" "source_list" {
   depends_on = [
-    aws_api_gateway_method.bucket_delete,
-    aws_api_gateway_integration.bucket_delete
+    aws_api_gateway_method.source_list,
+    aws_api_gateway_integration.source_list
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.bucket_delete.http_method
+  resource_id   = local.resource_id
+  http_method = aws_api_gateway_method.source_list.http_method
   status_code = "200"
 
   response_models = {
@@ -96,16 +93,16 @@ resource "aws_api_gateway_method_response" "bucket_delete" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "bucket_delete" {
+resource "aws_api_gateway_integration_response" "source_list" {
   depends_on = [
-    aws_api_gateway_method.bucket_delete,
-    aws_api_gateway_integration.bucket_delete
+    aws_api_gateway_method.source_list,
+    aws_api_gateway_integration.source_list
   ]
 
   rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.bucket_delete.http_method
-  status_code = aws_api_gateway_method_response.bucket_delete.status_code
+  resource_id   = local.resource_id
+  http_method = aws_api_gateway_method.source_list.http_method
+  status_code = aws_api_gateway_method_response.source_list.status_code
 
   selection_pattern = ""
 

@@ -4,41 +4,58 @@ TEST_KEY="allow"
 ROOT_URL="$(terraform -chdir=./deploy output -raw api_path)"
 BUCKET_NAME="$(terraform -chdir=./prepare output -raw bucket_name)"
 
-BUCKET_URL=${ROOT_URL}/${BUCKET_NAME}
-echo ${BUCKET_URL}
+API_URL=${ROOT_URL}/kbaas
 
-echo ${BUCKET_URL}
-curl -s -o /dev/null -w "%{http_code}" -H "authorizationToken: something" -H "type: TOKEN" GET "${ROOT_URL}"
+LIST_URL="${API_URL}/list/?authKey=${TEST_KEY}"
+UPLOAD_URL="${API_URL}/phrases/?authKey=${TEST_KEY}"
+QUERY_URL="${API_URL}/query/?authKey=${TEST_KEY}"
+
+echo -e "Fail on auth"
+FAIL_KEY="fail"
+
+echo -e "LIST BUCKET"
+echo -e ${LIST_URL}
+curl -X GET ${LIST_URL}
 echo -e "\n"
 
-LIST_URL="${BUCKET_URL}/list"
-curl -s -o /dev/null -w "%{http_code}" -H 'Authorization: your-jwt-or-opaque-token-here' GET "${LIST_URL}"
-echo -e "\n"
-
-curl -X GET "${LIST_URL}" \
--H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDEiLCJpYXQiOjE2NzgwMDQ5MDAsImV4cCI6MTY3ODAwODUwMH0.S-gI7F3z-Y9C3hQp_B6X0n_V3O_4h_jT2f8B3N6r_gA'
-echo -e "\n"
-
-curl -X GET "${BUCKET_URL}/?authKey=deny"
+echo -e "UPLOAD FILE"
+echo -e ${UPLOAD_URL}
+curl -X PUT --upload-file "./from_test.txt.gz" ${UPLOAD_URL}
 echo -e "\n"
 
 echo -e "Should succeed"
-curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
+echo -e "LIST BUCKET"
+echo -e ${LIST_URL}
+curl -X GET ${LIST_URL}
 echo -e "\n"
 
-curl -X GET "${BUCKET_URL}/test/?authKey=${TEST_KEY}"
+echo -e "UPLOAD FILE"
+echo -e ${UPLOAD_URL}
+curl -X PUT --upload-file "./from_test.txt.gz" ${UPLOAD_URL}
 echo -e "\n"
 
-PUT_KEY="fromTest"
-curl -X PUT --upload-file "./from_test.txt.gz" "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
+echo -e "QUERY STORY"
+echo -e ${QUERY_URL}
+curl -X POST -H "Content-Type: application/json" -d 'Example of a story in body.' ${QUERY_URL}
 echo -e "\n"
 
-curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
+echo -e "cors"
+echo -e "API"
+echo -e ${API_URL}
+curl -X OPTIONS ${API_URL}
 echo -e "\n"
 
-curl -X DELETE "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
+echo -e "LIST BUCKET"
+echo -e ${LIST_URL}
+curl -X OPTIONS ${LIST_URL}
 echo -e "\n"
 
-curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
+echo -e "UPLOAD FILE"
+echo -e ${UPLOAD_URL}
+curl -X OPTIONS ${UPLOAD_URL}
 echo -e "\n"
 
+echo -e "QUERY STORY"
+echo -e ${QUERY_URL}
+curl -X OPTIONS ${QUERY_URL}
+echo -e "\n"

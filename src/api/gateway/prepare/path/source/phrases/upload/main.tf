@@ -27,10 +27,6 @@ variable "resource_id" {
   type = string
 }
 
-variable "root_resource_id" {
-  type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
@@ -41,48 +37,37 @@ locals {
   region = data.aws_region.current.region
 }
 
-resource "aws_api_gateway_method" "object_get" {
+resource "aws_api_gateway_method" "bucket_put" {
   rest_api_id   = var.rest_api_id
   resource_id   = var.resource_id
-  http_method   = "GET"
+  http_method   = "PUT"
 
   authorization = "CUSTOM"
   authorizer_id = var.authorizer_id
-
-  request_parameters = {
-    "method.request.path.bucket" = true
-    "method.request.path.object" = true
-    "method.request.path.authKey" = true
-  }
 }
 
-resource "aws_api_gateway_integration" "object_get" {
+resource "aws_api_gateway_integration" "bucket_put" {
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.object_get.http_method
+  http_method = aws_api_gateway_method.bucket_put.http_method
 
   type        = "AWS"
-  integration_http_method = "GET"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/{bucket}/{object}"
+  integration_http_method = "PUT"
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}/phrases"
   credentials = var.bucket_access_role
 
   passthrough_behavior    = "WHEN_NO_MATCH"
-
-  request_parameters = {
-    "integration.request.path.bucket" = "method.request.path.bucket"
-    "integration.request.path.object" = "method.request.path.object"
-  }
 }
 
-resource "aws_api_gateway_method_response" "object_get" {
+resource "aws_api_gateway_method_response" "bucket_put" {
   depends_on = [
-    aws_api_gateway_method.object_get,
-    aws_api_gateway_integration.object_get
+    aws_api_gateway_method.bucket_put,
+    aws_api_gateway_integration.bucket_put
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.object_get.http_method
+  http_method = aws_api_gateway_method.bucket_put.http_method
   status_code = "200"
 
   response_models = {
@@ -96,16 +81,16 @@ resource "aws_api_gateway_method_response" "object_get" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "object_get" {
+resource "aws_api_gateway_integration_response" "bucket_put" {
   depends_on = [
-    aws_api_gateway_method.object_get,
-    aws_api_gateway_integration.object_get
+    aws_api_gateway_method.bucket_put,
+    aws_api_gateway_integration.bucket_put
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = var.resource_id
-  http_method = aws_api_gateway_method.object_get.http_method
-  status_code = aws_api_gateway_method_response.object_get.status_code
+  http_method = aws_api_gateway_method.bucket_put.http_method
+  status_code = aws_api_gateway_method_response.bucket_put.status_code
 
   selection_pattern = ""
 
