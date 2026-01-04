@@ -15,10 +15,6 @@ variable "rest_api_id" {
   type = string
 }
 
-variable "lambda_role_arn" {
-  type = string
-}
-
 variable "execution_arn" {
   type = string
 }
@@ -27,6 +23,27 @@ variable "auth_key" {
   sensitive = true
   default = "allow"
   type = string
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name = "serverless_lambda"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_log" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 data "archive_file" "bucket_authorizer" {
@@ -39,7 +56,7 @@ data "archive_file" "bucket_authorizer" {
 resource "aws_lambda_function" "bucket_authorizer" {
   filename          = "${path.module}/handler.zip"
   function_name     = "bucketAuthorizer"
-  role              = var.lambda_role_arn
+  role              = aws_iam_role.lambda_exec.arn
   handler           = "handler.handler"
   runtime           = "python3.14"
   
