@@ -11,6 +11,14 @@ provider "aws" {
   profile = "kbaas"
 }
 
+variable "execution_arn" {
+  type = string
+}
+
+variable "kb_id" {
+  type = string
+}
+
 data "archive_file" "query" {
   type             = "zip"
   source_file      = "${path.module}/lambda_function.py"
@@ -100,8 +108,13 @@ resource "aws_iam_role_policy_attachment" "query_knowledge_base" {
   policy_arn = aws_iam_policy.query_knowledge_base.arn
 }
 
-output "query_name" {
-  value = aws_lambda_function.query.arn
+resource "aws_lambda_permission" "gateway_query" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.query.id}"
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${var.execution_arn}/*/*"
 }
 
 output "invoke_arn" {

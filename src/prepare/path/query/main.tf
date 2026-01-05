@@ -23,12 +23,19 @@ variable "authorizer_id" {
   type = string
 }
 
-variable "invoke_arn" {
+variable "execution_arn" {
     type = string
+}
+
+variable "kb_id" {
+  type = string
 }
 
 module "handler" {
   source = "./handler"
+
+  kb_id = var.kb_id
+  execution_arn = var.execution_arn
 }
 
 module "endpoint" {
