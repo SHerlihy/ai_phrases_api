@@ -56,7 +56,7 @@ resource "aws_api_gateway_integration" "bucket_put" {
   uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}/phrases"
   credentials = var.bucket_access_role
 
-  passthrough_behavior    = "WHEN_NO_MATCH"
+  passthrough_behavior    = "WHEN_NO_TEMPLATES"
 }
 
 resource "aws_api_gateway_method_response" "bucket_put" {
