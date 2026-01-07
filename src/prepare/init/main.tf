@@ -51,6 +51,11 @@ resource "aws_iam_role_policy_attachment" "bucket_access" {
 
 resource "aws_api_gateway_rest_api" "kbaas" {
   name        = "kbaas"
+  
+  binary_media_types = [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword"
+  ]
 }
 
 resource "aws_api_gateway_resource" "kbaas" {
