@@ -30,6 +30,10 @@ variable "kb_id" {
     type = string
 }
 
+variable "source_id" {
+    type = string
+}
+
 module "init" {
   source = "./init"
 
