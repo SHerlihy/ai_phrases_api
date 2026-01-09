@@ -24,10 +24,6 @@ variable "source_id" {
 }
 
 data "archive_file" "sync" {
-  depends_on = [
-      terraform_data.create_dist
-  ]
-
   type             = "zip"
   source_dir = "${path.module}/dist"
   output_path = "${path.module}/my_deployment_package.zip"
