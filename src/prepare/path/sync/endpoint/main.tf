@@ -47,7 +47,7 @@ resource "aws_api_gateway_integration" "sync" {
   resource_id   = aws_api_gateway_resource.sync.id
 
   http_method          = aws_api_gateway_method.sync.http_method
-  integration_http_method = "PATCH"
+  integration_http_method = "POST"
   type                 = "AWS_PROXY"
 
   uri = var.invoke_arn
