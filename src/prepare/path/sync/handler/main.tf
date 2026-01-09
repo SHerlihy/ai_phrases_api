@@ -23,13 +23,6 @@ variable "source_id" {
   type = string
 }
 
-resource "terraform_data" "create_dist" {
-  provisioner "local-exec" {
-    working_dir = "${path.module}"
-    command = "./create_dist.sh"
-  }
-}
-
 data "archive_file" "sync" {
   depends_on = [
       terraform_data.create_dist

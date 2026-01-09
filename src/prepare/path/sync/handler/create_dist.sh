@@ -1,9 +1,11 @@
 #!/bin/bash
 
-rm -rf ./dist
+SCRIPT_PATH="$(dirname "$(realpath "$0")")"
 
-mkdir ./dist
+rm -rf $SCRIPT_PATH/dist
 
-pip install --target ./dist datetime
+mkdir $SCRIPT_PATH/dist
 
-cp ./lambda_function.py ./dist
+pip install --target $SCRIPT_PATH/dist datetime
+
+cp $SCRIPT_PATH/lambda_function.py $SCRIPT_PATH/dist
