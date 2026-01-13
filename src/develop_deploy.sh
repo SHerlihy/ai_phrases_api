@@ -8,6 +8,8 @@ terraform -chdir=./develop init
 
 ./refreshers/create_dist.sh
 
+cat ./variables/shared.txt > ./api/terraform.tfvars
+
 terraform -chdir=./api apply -var="auth_key=${AUTH_KEY}" --auto-approve
 
 terraform -chdir=./api output > ./develop/terraform.tfvars
