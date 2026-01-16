@@ -11,12 +11,8 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "rest_api_id" {
-  type = string
-}
-
 resource "aws_api_gateway_deployment" "main" {
-  rest_api_id = var.rest_api_id
+  rest_api_id = aws_api_gateway_rest_api.kbaas.id 
 
   lifecycle {
     create_before_destroy = true
@@ -24,11 +20,7 @@ resource "aws_api_gateway_deployment" "main" {
 }
 
 resource "aws_api_gateway_stage" "main" {
-  rest_api_id = var.rest_api_id
+  rest_api_id = aws_api_gateway_rest_api.kbaas.id 
   deployment_id = aws_api_gateway_deployment.main.id
   stage_name    = "main"
-}
-
-output "api_path" {
-    value = aws_api_gateway_stage.main.invoke_url
 }

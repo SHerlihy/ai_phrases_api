@@ -11,6 +11,10 @@ provider "aws" {
   profile = "kbaas"
 }
 
+variable "build_uid" {
+  type = string
+}
+
 variable "execution_arn" {
   type = string
 }
@@ -30,7 +34,7 @@ resource "aws_lambda_function" "query" {
   filename = "${path.module}/my_deployment_package.zip"
   code_sha256 = data.archive_file.query.output_sha256
 
-  function_name = "query"
+  function_name = "${var.build_uid}-query"
   handler = "lambda_function.handler"
 
   runtime = "python3.14"
@@ -53,7 +57,7 @@ resource "aws_cloudwatch_log_group" "query" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "query_lambda"
+  name = "${var.build_uid}_query_lambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

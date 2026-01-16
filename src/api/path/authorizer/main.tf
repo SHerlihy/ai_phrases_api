@@ -11,7 +11,11 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "rest_api_id" {
+variable "build_uid" {
+  type = string
+}
+
+variable "api_id" {
   type = string
 }
 
@@ -26,7 +30,7 @@ variable "auth_key" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "serverless_lambda"
+  name = "${var.build_uid}_serverless_lambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -56,7 +60,7 @@ data "archive_file" "authorizer" {
 resource "aws_lambda_function" "authorizer" {
   filename          = "${path.module}/handler.zip"
   code_sha256 = data.archive_file.authorizer.output_sha256
-  function_name     = "bucketAuthorizer"
+  function_name     = "${var.build_uid}bucketAuthorizer"
   role              = aws_iam_role.lambda_exec.arn
   handler           = "handler.handler"
   runtime           = "python3.14"
@@ -93,7 +97,7 @@ data "aws_iam_policy_document" "invocation_assume_role" {
 }
 
 resource "aws_iam_role" "invocation_role" {
-  name               = "api_gateway_auth_invocation"
+  name               = "${var.build_uid}_api_gateway_auth_invocation"
   assume_role_policy = data.aws_iam_policy_document.invocation_assume_role.json
 }
 
@@ -106,7 +110,7 @@ data "aws_iam_policy_document" "invocation_policy" {
 }
 
 resource "aws_iam_role_policy" "invocation_policy" {
-  name   = "apiAuthorizer"
+  name   = "${var.build_uid}ApiAuthorizer"
   role   = aws_iam_role.invocation_role.id
   policy = data.aws_iam_policy_document.invocation_policy.json
 }
@@ -116,8 +120,8 @@ locals {
 }
 
 resource "aws_api_gateway_authorizer" "kbaas" {
-  name                   = "kbaas"
-  rest_api_id            = var.rest_api_id
+  name                   = "${var.build_uid}kbaas"
+  rest_api_id            = var.api_id
   authorizer_uri         = local.auth_uri
   type = "REQUEST"
   identity_source                  = "method.request.querystring.authKey"

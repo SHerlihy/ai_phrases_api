@@ -7,14 +7,6 @@ terraform {
   }
 }
 
-variable "profile" {
-  type = string
-}
-
-variable "region" {
-    type = string
-}
-
 provider "aws" {
     profile = "kbaas"
 }
@@ -26,7 +18,7 @@ locals {
 }
 
 resource "aws_s3_bucket" "fake_docs" {
-  bucket_prefix = "fake_docs"
+  bucket_prefix = "fakedocs"
   force_destroy = true
 }
 
@@ -60,12 +52,4 @@ resource "aws_iam_policy" "dev_gateway_access" {
       },
     ],
   })
-}
-
-output "bucket_access_policy" {
-    value = aws_iam_policy.dev_gateway_access.arn
-}
-
-output "bucket_name" {
-    value = aws_s3_bucket.fake_docs.arn
 }
