@@ -1,6 +1,7 @@
 #!/bin/bash
 
 AUTH_KEY=$1
+STAGE_UID="dev"
 
 terraform -chdir=./dev_fakes init
 terraform -chdir=./api init
@@ -16,7 +17,7 @@ cat ./variables/shared/shared.txt >> ./api/terraform.tfvars
 cat ./variables/develop/api.txt >> ./api/terraform.tfvars
 
 echo "auth_key = \"${AUTH_KEY}\"" >> ./api/terraform.tfvars
-echo "stage_uid = \"dev\"" >> ./api/terraform.tfvars
+echo "stage_uid = \"${STAGE_UID}\"" >> ./api/terraform.tfvars
 
 #terraform -chdir=./api plan
 terraform -chdir=./api apply
