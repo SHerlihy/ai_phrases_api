@@ -20,14 +20,10 @@ resource "aws_api_gateway_rest_api" "kbaas" {
   ]
 }
 
-output "api_id" {
-  value = aws_api_gateway_rest_api.kbaas.id
-}
-
-output "root_id" {
-  value   = aws_api_gateway_rest_api.kbaas.root_resource_id
-}
-
-output "execution_arn" {
-  value   = aws_api_gateway_rest_api.kbaas.execution_arn
+output "root" {
+  value = {
+    api_id = aws_api_gateway_rest_api.kbaas.id
+    root_id   = aws_api_gateway_rest_api.kbaas.root_resource_id
+    execution_arn   = aws_api_gateway_rest_api.kbaas.execution_arn
+  }
 }
