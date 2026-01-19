@@ -25,9 +25,6 @@ variable "root" {
   })
 }
 
-variable "bucket" {
-  type = object({
-    bucket_name = string
-    bucket_access_policy = string
-  })
+variable "bucket_access_policy" {
+  type = string
 }

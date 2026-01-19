@@ -16,7 +16,7 @@ module "api_role" {
 
   stage_uid = var.stage_uid
 
-  bucket_access_policy = var.bucket.bucket_access_policy
+  bucket_access_policy = var.bucket_access_policy
 }
 
 module "paths" {
@@ -29,11 +29,6 @@ module "paths" {
     resource_id = var.root.root_id
   }
 
-  bucket = {
-    bucket_name = var.bucket.bucket_name
-    bucket_access_role = module.api_role.gateway_role_arn
-  }
-
   execution_arn = var.root.execution_arn
 
   auth_key = var.auth_key
@@ -41,4 +36,20 @@ module "paths" {
   kb_id = var.kb_id
 
   source_id = var.source_id
+}
+
+output "gateway_role_arn" {
+  value = module.api_role.gateway_role_arn
+}
+
+output "authorizer_id" {
+  value = module.authorizer.id
+}
+
+output "query_invoke_arn" {
+  value = module.query.invoke_arn
+}
+
+output "sync_invoke_arn" {
+  value = module.sync.invoke_arn
 }
