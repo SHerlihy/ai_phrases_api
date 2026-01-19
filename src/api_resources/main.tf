@@ -38,18 +38,18 @@ module "paths" {
   source_id = var.source_id
 }
 
-output "gateway_role_arn" {
+output "gateway_access_bucket_role" {
   value = module.api_role.gateway_role_arn
 }
 
 output "authorizer_id" {
-  value = module.authorizer.id
+  value = module.paths.authorizer_id
 }
 
 output "query_invoke_arn" {
-  value = module.query.invoke_arn
+  value = module.paths.query_invoke_arn
 }
 
 output "sync_invoke_arn" {
-  value = module.sync.invoke_arn
+  value = module.paths.sync_invoke_arn
 }
