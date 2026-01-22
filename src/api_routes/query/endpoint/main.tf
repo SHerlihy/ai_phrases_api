@@ -31,8 +31,7 @@ resource "aws_api_gateway_method" "query" {
   resource_id   = aws_api_gateway_resource.query.id
   http_method   = "POST"
 
-  authorization = "CUSTOM"
-  authorizer_id = var.authorizer_id
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "query" {
