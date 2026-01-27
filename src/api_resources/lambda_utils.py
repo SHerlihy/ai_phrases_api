@@ -2,16 +2,14 @@ import re
 
 def findTerminatorIdcs(text):
     tIdcs = []
-    terminators = re.compile('([\\.!?"].)')
+    terminators = re.compile('(?s:.)([\\.!?"])(?s:.)')
     matches = re.finditer(terminators, text)
 
     for m in matches:
-        tIdx = m.start()
+        tIdx = m.start(1)
+        print(tIdx)
 
-        if tIdx+1 == len(text):
-            tIdcs.append(tIdx)
-        break
-
+        prev = text[tIdx-1]
         term = text[tIdx]
         after = text[tIdx+1]
 
@@ -20,7 +18,7 @@ def findTerminatorIdcs(text):
                 tIdcs.append(tIdx)
 
         elif term == ".":
-            if after != ".":
+            if after != "." and prev != ".":
                 tIdcs.append(tIdx)
 
         else:
