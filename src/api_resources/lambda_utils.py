@@ -1,10 +1,11 @@
+import re
 
-def terminatorIdcs(text):
+def findTerminatorIdcs(text):
     tIdcs = []
     terminators = re.compile('([\.!?"].)')
     matches = re.finditer(terminators, text)
 
-    for match in matches:
+    for m in matches:
         tIdx = m.start()
 
         if text[tIdx] != '"':
@@ -18,7 +19,7 @@ def terminatorIdcs(text):
 def splitByLineCount(text, count):
     splits = []
 
-    tIdcs = terminatorIdcs(text)
+    tIdcs = findTerminatorIdcs(text)
 
     lIdx = 0
     rIdx = count
@@ -27,6 +28,6 @@ def splitByLineCount(text, count):
         lIdx = rIdx
         rIdx+=count
 
-    splits.aapend(text[lIdx:])
+    splits.append(text[lIdx:])
 
     return splits
