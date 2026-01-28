@@ -32,10 +32,10 @@ def splitByLineCount(text, count):
 
     tIdcs = findTerminatedIdcs(text)
 
-    splits.append(text[:tIdcs[0]])
+    splits.append(text[:tIdcs[count-1]])
 
-    tIdxLeft = 0
-    tIdxRight = count
+    tIdxLeft = count-1
+    tIdxRight = tIdxLeft + count
     while tIdxRight < len(tIdcs):
         sIdxLeft = tIdcs[tIdxLeft]
         sIdxRight = tIdcs[tIdxRight]

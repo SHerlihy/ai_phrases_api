@@ -57,30 +57,30 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
 
         segments = splitByLineCount(multi_punctuation, 1)
         
-        print(segments)
 
         self.assertEqual(len(segments), len(sentances))
 
         self.assertEqual(segments, sentances)
 
-    # def test_for_multi_punctuation(self):
-    #     sentances = [
-    #         'vavvaniovwip.\n',
-    #         'vavvaniovwip?\n',
-    #         'vavvaniovwip!\n',
-    #         'vavvanio "vwip"\n',
-    #         'vavvaniovwip!\n',
-    #         'vavvaniovwip?\n'
-    #         ]
-    #
-    #     multi_punctuation = "".join(sentances)
-    #
-    #     segments = splitByLineCount(multi_punctuation, 2)
-    #
-    #     self.assertEqual(len(segments), 3)
-    #
-    #     self.assertEqual(segments, [
-    #         sentances[0]+sentances[1],
-    #         sentances[2]+sentances[3],
-    #         sentances[4]+sentances[5]
-    #         ])
+    def test_for_multi_punctuation(self):
+        sentances = [
+            'vavvaniovwip.\n',
+            'vavvaniovwip?\n',
+            'vavvaniovwip!\n',
+            'vavvanio "vwip"\n',
+            'vavvaniovwip!\n',
+            'vavvaniovwip?\n'
+            ]
+    
+        multi_punctuation = "".join(sentances)
+    
+        segments = splitByLineCount(multi_punctuation, 2)
+        print(segments)
+    
+        self.assertEqual(len(segments), 3)
+    
+        self.assertEqual(segments, [
+            sentances[0]+sentances[1],
+            sentances[2]+sentances[3],
+            sentances[4]+sentances[5]
+            ])
