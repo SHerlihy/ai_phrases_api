@@ -32,6 +32,10 @@ def splitByLineCount(text, count):
 
     tIdcs = findTerminatedIdcs(text)
 
+    if count > len(tIdcs):
+        splits.append(text)
+        return splits
+
     splits.append(text[:tIdcs[count-1]])
 
     tIdxLeft = count-1

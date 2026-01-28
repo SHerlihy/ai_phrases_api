@@ -62,7 +62,7 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
 
         self.assertEqual(segments, sentances)
 
-    def test_for_multi_punctuation(self):
+    def test_for_double_strings(self):
         sentances = [
             'vavvaniovwip.\n',
             'vavvaniovwip?\n',
@@ -75,7 +75,6 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
         multi_punctuation = "".join(sentances)
     
         segments = splitByLineCount(multi_punctuation, 2)
-        print(segments)
     
         self.assertEqual(len(segments), 3)
     
@@ -83,4 +82,60 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
             sentances[0]+sentances[1],
             sentances[2]+sentances[3],
             sentances[4]+sentances[5]
+            ])
+
+    def test_for_triple_strings(self):
+        sentances = [
+            'vavvaniovwip.\n',
+            'vavvaniovwip?\n',
+            'vavvaniovwip!\n',
+            'vavvanio "vwip"\n',
+            'vavvaniovwip!\n',
+            'vavvaniovwip?\n'
+            ]
+    
+        multi_punctuation = "".join(sentances)
+    
+        segments = splitByLineCount(multi_punctuation, 3)
+    
+        self.assertEqual(len(segments), 2)
+    
+        self.assertEqual(segments, [
+            sentances[0]+sentances[1]+sentances[2],
+            sentances[3]+sentances[4]+sentances[5]
+            ])
+
+    def test_for_underfill(self):
+        sentances = [
+            'vavvaniovwip.\n',
+            'vavvaniovwip?\n'
+            ]
+    
+        multi_punctuation = "".join(sentances)
+    
+        segments = splitByLineCount(multi_punctuation, 3)
+    
+        self.assertEqual(len(segments), 1)
+    
+        self.assertEqual(segments, [
+            sentances[0]+sentances[1]
+            ])
+
+    def test_for_overfill(self):
+        sentances = [
+            'vavvaniovwip.\n',
+            'vavvaniovwip?\n',
+            'vavvaniovwip!\n',
+            'vavvanio "vwip"\n',
+            ]
+    
+        multi_punctuation = "".join(sentances)
+    
+        segments = splitByLineCount(multi_punctuation, 3)
+    
+        self.assertEqual(len(segments), 2)
+    
+        self.assertEqual(segments, [
+            sentances[0]+sentances[1]+sentances[2],
+            sentances[3]
             ])
