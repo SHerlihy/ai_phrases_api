@@ -17,7 +17,7 @@ terraform -chdir=./api_routes init
 
 case "$STAGE_UID" in
     "prod")
-        ./refreshers/create_dist.sh
+        ./refreshers/create_dists.sh
     ;;
     *)
         terraform -chdir=./dev_fakes init
