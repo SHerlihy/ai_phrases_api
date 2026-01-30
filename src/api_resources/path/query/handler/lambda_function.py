@@ -11,7 +11,7 @@ session = boto3.Session()
 bedrock = session.client('bedrock')
 agent = session.client('bedrock-agent-runtime')
 
-def handler(event) -> Respose:
+async def handler(event) -> Respose:
     response = {
             'headers': {
                 'Access-Control-Allow-Origin': '*',
