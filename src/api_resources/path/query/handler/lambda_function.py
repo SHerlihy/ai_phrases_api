@@ -53,11 +53,11 @@ class Query_KB():
     def __init__(self):
         self.KB_ID = os.environ.get('KB_ID')
 
-        self.agent_profile ='You will be given a Story Paragraph and must mark phrases that sound like they are created by AI. \
-        You are only allowed to respond with a marked version of the Story Paragraph. \
-        You must mark phrases by enclosing each phrase in braces. \
-        The following text, enclosed in square brackets, includes high priority examples of phrases to be marked [$search_results$]. \
-        The following text, enclosed in square brackets, is the Story Paragraph for you to return marked [$query$].'
+        self.agent_profile ='You will be given a Story Extract and must mark the phrase or word that sounds like it was created by AI. \
+        You are only allowed to respond with a marked version of the Story Extract. \
+        You must mark by enclosing the word or phrase in braces. \
+        The following text, enclosed in square brackets, includes high priority examples of words and phrases created by AI [$search_results$]. \
+        The following text, enclosed in square brackets, is the Story Extract for you to return marked [$query$].'
         
         model_id = "amazon.nova-micro-v1:0"
         fm_res = bedrock.get_foundation_model(
