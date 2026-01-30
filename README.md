@@ -6,17 +6,14 @@
     subgraph AWS
     subgraph global
 
-        STAGE[main]
-        KBAAS{kbaas}
+        STAGE{prod}
 
         PREFLIGHT[preflight]
         
-        STAGE --> KBAAS
-        
-        KBAAS --> PREFLIGHT
-        PREFLIGHT --> KBAAS
+        STAGE --> PREFLIGHT
+        PREFLIGHT --> STAGE
 
-        KBAAS <--> LIST & PHRASES & QUERY & SYNC
+        STAGE <--> LIST & PHRASES & QUERY & SYNC
 
         LIST[list]
         PHRASES[phrases]
