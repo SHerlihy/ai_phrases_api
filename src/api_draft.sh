@@ -1,11 +1,8 @@
 #!/bin/bash
 
-AUTH_KEY=$1
-STAGE_UID=$2
-
 AUTO=''
 
-while getopts “:a” OPTION
+while getopts “a” OPTION
 do
   case $OPTION in
     a)
@@ -13,6 +10,11 @@ do
       ;;
   esac
 done
+
+shift $((OPTIND - 1))
+
+AUTH_KEY=$1
+STAGE_UID=$2
 
 if [[ -z "$AUTH_KEY" ]]; then
     read -p "Enter auth key: " AUTH_KEY
